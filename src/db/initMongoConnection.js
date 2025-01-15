@@ -1,7 +1,6 @@
-/* eslint-disable no-undef */
 import mongoose from 'mongoose';
 
-import { getEnvVar } from '../src/utils/getEnvVar.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const initMongoConnection = async () => {
     try {
