@@ -1,13 +1,13 @@
-const parseIsFavorite = (isFavorite) => {
-    const isString = typeof isFavorite === 'string';
+const parseIsFavourite = (isFavourite) => {
+    const isString = typeof isFavourite === 'string';
     if (!isString) return;
 
-    const isFavoriteLower = isFavorite.toLowerCase();
+    const isFavouriteLower = isFavourite.toLowerCase();
     
-    const isBoolean = isFavoriteLower === 'true' || isFavoriteLower === 'false';
+    const isBoolean = isFavouriteLower === 'true' || isFavouriteLower === 'false';
     if (!isBoolean) return;
 
-    return isFavorite === 'true' ? true : false;
+    return isFavourite === 'true' ? true : false;
 };
 
 const parseContactType = (contactType) => {
@@ -21,13 +21,13 @@ const parseContactType = (contactType) => {
 };
 
 export const parseFilterParams = (query) => {
-    const { type, isFavorite } = query;
+    const { type, isFavourite } = query;
     
-    const parsedIsFavorite = parseIsFavorite(isFavorite);
+    const parsedIsFavourite = parseIsFavourite(isFavourite);
     const parsedContactType = parseContactType(type);
     
     return {
         type: parsedContactType,
-        isFavorite: parsedIsFavorite,
+        isFavourite: parsedIsFavourite,
     };
 };
