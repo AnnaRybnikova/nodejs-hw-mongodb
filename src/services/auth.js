@@ -2,9 +2,17 @@ import { randomBytes } from 'crypto';
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
-import { FIFTEEN_MINUTES, THIRTEEN_DAYS } from '../constants/index.js';
+import { FIFTEEN_MINUTES, SMTP, TEMPLATES_DIR, THIRTEEN_DAYS } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/sessions.js';
 import { UsersCollection } from "../db/models/users.js";
+
+import jwt from 'jsonwebtoken';
+import { sendEmail } from '../utils/sendMail.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 export const registerUser = async (payload) => {
     const user = await UsersCollection.findOne({ email: payload.email });
@@ -50,7 +58,7 @@ export const loginUser = async (payload) => {
     return await SessionsCollection.create({
         userId: user._id,
         ...session,
-  });
+    });
 };
 
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
@@ -81,4 +89,45 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
 
 export const logoutUser = async (sessionId) => {
     await SessionsCollection.deleteOne({ _id: sessionId });
+};
+
+export const requestResetToken = async (email) => {
+    const user = await UsersCollection.findOne({ email });
+    if (!user) {
+        throw createHttpError(404, 'User not found');
+    }
+    
+    const resetToken = jwt.sign(
+        {
+            sub: user._id,
+            email,
+        },
+        getEnvVar('JWT_SECRET'),
+        {
+            expiresIn: '5m',
+        },
+    );
+    
+    const resetPasswordTemplatePath = path.join(TEMPLATES_DIR, 'reset-password-email.html');
+    
+    const templateSource = (
+        await fs.readFile(resetPasswordTemplatePath)
+    ).toString();
+    
+    const template = handlebars.compile(templateSource);
+    const html = template({
+        name: user.name,
+        link: `${getEnvVar('APP_DOMAIN')}/reset-password?token=${resetToken}`,
+    });
+    
+    try {
+        await sendEmail({
+            from: getEnvVar(SMTP.SMTP_FROM),
+            to: email,
+            subject: 'Reset your password',
+            html,
+        });
+    } catch {
+        throw createHttpError(500, 'Failed to send the email, please try again later.');
+    }
 };
