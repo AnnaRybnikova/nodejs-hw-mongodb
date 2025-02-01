@@ -6,17 +6,19 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   description:
-    This project is a Node.js-based REST API using MongoDB for data storage. 
-    It includes user authentication, CRUD operations, and API documentation generated with Swagger. 
-    The project follows best practices for structuring an Express.js application and integrating Swagger 
-    for easy API exploration.
-#tags:
-  # теги
+    This is a documentation of contacts app
+tags:
+  - name: Contacts
+    description: Operations about contacts.
+  - name: Auth
+    description: Auth operations.
 servers:
   - url: http://localhost:3000
-  #- url: #посилання на задеплоєний сайт
-#paths:
-  # посилання на ендпоінти
+  - url: https://contacts-app-28pt.onrender.com
+paths:
+  /contacts/{contactId}:
+    get:
+      $ref: ../swagger/paths/contacts/{id}/get.yaml
 components:
   securitySchemes:
     bearerAuth:
