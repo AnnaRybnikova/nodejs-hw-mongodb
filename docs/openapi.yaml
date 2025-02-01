@@ -16,6 +16,9 @@ servers:
   - url: http://localhost:3000
   - url: https://contacts-app-28pt.onrender.com
 paths:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
   /contacts/{contactId}:
     get:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
