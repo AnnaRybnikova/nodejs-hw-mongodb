@@ -1,0 +1,80 @@
+tags:
+  - Auth
+summary: Register user
+operationId: register
+description: 'Register user'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+        properties:
+          name:
+            description: "User's name"
+            type: string
+            example: 'John Doe'
+          email:
+            description: "User's email"
+            type: string
+            example: "email@example.com"
+          password:
+            description: "User's password"
+            type: string
+            example: "myPassword"
+
+responses:
+  '201':
+    description: 'Successfully registered a user!'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully registered a user!
+            data:
+              required:
+                - name
+                - email
+                - _id
+                - createdAt
+                - updatedAt
+              properties:
+                _id:
+                  description: "User's id"
+                  type: string
+                  example: 65e4decdd286b30065d54af9
+                name:
+                  description: "User's name"
+                  type: string
+                  example: 'John Doe'
+                email:
+                  description: "User's email"
+                  type: string
+                  example: "email@example.com"
+                createdAt: 
+                  description: "Time stamp when user's profile created"
+                  type: string
+                  example: "2025-01-31T17:14:32.114Z"
+                updatedAt:
+                  description: "Time stamp when user's profile last updated"
+                  type: string
+                  example: "2025-01-31T17:14:32.114Z"
+  '400':
+    $ref: '../../../components/responses/400.yaml'
+  '409':
+    $ref: '../../../components/responses/auth/409.yaml'
